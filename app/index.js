@@ -36,6 +36,6 @@ app.use(cookieParser());
 //   res.render('error');
 // });
 
-require('./image').init(app)
+require('./image').init(app);
 
 module.exports = app;

@@ -1,11 +1,18 @@
+const imagesClient = require('google-images');
+const config = require('../../config/').googleImages;
+
 function initImage (app) {
   app.get('/', (req, res) => {
     res.send("Hello World");
   });
 
   app.get('/image/:terms', (req, res) => {
-    res.send(req.params);
+    let client = new imagesClient(config.id, config.key);
+    client.search(req.params.terms)
+    .then(function(images){
+      res.send(images);
+    });
   });
 }
 
-module.exports = initImage
+module.exports = initImage;
