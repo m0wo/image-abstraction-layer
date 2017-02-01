@@ -1,5 +1,5 @@
-const imagesClient = require('google-images');
 const config = require('../../config/').googleImages;
+const request = require('request');
 
 function initImage (app) {
   app.get('/', (req, res) => {
@@ -7,12 +7,24 @@ function initImage (app) {
   });
 
   app.get('/image/:terms', (req, res) => {
-    let client = new imagesClient(config.id, config.key);
-    client.search(req.params.terms)
-    .then(function(images){
-      res.send(images);
+    var searchUrl = 'https://www.googleapis.com/customsearch/v1?searchType=image&q='
+    + req.params.terms
+    + '&cx=' + config.id
+    + '&key=' + config.key;
+
+    request(searchUrl, (err, _res, body) => {
+      body = JSON.parse(body);
+
+      res.send(
+        body.items.map((item) => {
+        return {
+          imageUrl: item.link,
+          pageUrl: item.image.contextLink,
+          altText: item.title
+          };
+        }));
+      });
     });
-  });
 }
 
 module.exports = initImage;
